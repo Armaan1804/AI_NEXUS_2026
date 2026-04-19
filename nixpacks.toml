@@ -8,4 +8,5 @@ cmds = ["npm install"]
 cmds = ["npm run build"]
 
 [phases.start]
-cmd = "npm run start"
+cmd = "node server/src/index.js"
+

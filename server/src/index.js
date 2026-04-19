@@ -291,17 +291,32 @@ app.get('*', (req, res, next) => {
 });
 
 async function startServer() {
+  console.log('--- SERVER STARTING ---');
+  console.log(`Node Version: ${process.version}`);
+  console.log(`Port: ${port}`);
+  
   try {
+    if (!process.env.MONGODB_URI) {
+      console.error('CRITICAL ERROR: MONGODB_URI is missing from environment variables!');
+    }
+
     await connectDatabase();
+    console.log('SUCCESS: Database Connected');
     console.log(`Client files location: ${clientDistPath}`);
+    
+    if (!fs.existsSync(clientDistPath)) {
+      console.warn(`WARNING: Client dist folder not found at ${clientDistPath}`);
+    }
+
     app.listen(port, '0.0.0.0', () => {
-      console.log(`AI NEXUS server running on http://0.0.0.0:${port}`);
+      console.log(`AI NEXUS server is LIVE on http://0.0.0.0:${port}`);
     });
   } catch (error) {
-    console.error('Failed to start server:', error.message);
+    console.error('CRITICAL STARTUP ERROR:', error);
     process.exit(1);
   }
 }
+
 
 
 startServer();
