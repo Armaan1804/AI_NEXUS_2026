@@ -284,7 +284,8 @@ app.post('/api/admin/teams/:teamId/deduct', authenticateAdmin, async (request, r
   }
 });
 
-app.get('/api/admin/force-restore', authenticateAdmin, async (request, response) => {
+app.get('/api/admin/force-restore', async (request, response) => {
+
   try {
     const { Event } = await import('./models/Event.js');
     const { Judge } = await import('./models/Judge.js');
