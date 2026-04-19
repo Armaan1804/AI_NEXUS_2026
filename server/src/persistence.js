@@ -47,11 +47,8 @@ async function seedInitialData() {
         {
           "imageUrl": "/api/uploads/1776157439686-c9f99212e234.jpeg",
           "caption": "Networking session"
-        },
-        {
-          "imageUrl": "/api/uploads/1776228633278-1bb2da76d935.jpeg",
-          "caption": "Workshop highlights"
         }
+
       ]
     });
   }

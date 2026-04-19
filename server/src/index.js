@@ -294,9 +294,9 @@ app.get('/api/admin/force-restore', async (request, response) => {
     if (event) {
       event.photos = [
         { "imageUrl": "/api/uploads/1776157535536-1d7fa0f1fac7.jpeg", "caption": "Glimpse from past Event" },
-        { "imageUrl": "/api/uploads/1776157439686-c9f99212e234.jpeg", "caption": "Networking session" },
-        { "imageUrl": "/api/uploads/1776228633278-1bb2da76d935.jpeg", "caption": "Workshop highlights" }
+        { "imageUrl": "/api/uploads/1776157439686-c9f99212e234.jpeg", "caption": "Networking session" }
       ];
+
       event.contacts = [
         { "name": "Yasha Tasaneem", "phone": "63875 11385", "label": "Hackathon Coordinator" },
         { "name": "Namit Sharma", "phone": "98556 03243", "label": "Technical Lead(Admin)" }
