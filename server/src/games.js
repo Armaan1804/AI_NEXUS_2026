@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
-
-let currentGames = [];
+import { Game } from './models/Game.js';
 
 function normalizeText(value) {
   return String(value ?? '').trim();
@@ -11,67 +10,27 @@ function normalizeRewardPoints(value) {
   return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : 0;
 }
 
-function cloneSubmission(submission) {
-  return {
-    ...submission
-  };
-}
-
-function cloneGame(game) {
-  return {
-    ...game,
-    title: normalizeText(game.title),
-    description: normalizeText(game.description),
-    entryLabel: normalizeText(game.entryLabel) || 'Submission',
-    deadline: normalizeText(game.deadline),
-    rewardPoints: normalizeRewardPoints(game.rewardPoints),
-    acceptingEntries: Boolean(game.acceptingEntries),
-    submissions: Array.isArray(game.submissions) ? game.submissions.map(cloneSubmission) : []
-  };
-}
-
-function cloneGames(games) {
-  return Array.isArray(games) ? games.map(cloneGame) : [];
-}
-
 function hasDeadlineExpired(deadline) {
   const parsedDeadline = Date.parse(deadline);
-
-  if (!Number.isFinite(parsedDeadline)) {
-    return false;
-  }
-
+  if (!Number.isFinite(parsedDeadline)) return false;
   return Date.now() > parsedDeadline;
 }
 
-function findGame(gameId) {
-  return currentGames.find((game) => game.id === gameId);
+export async function getGames() {
+  return await Game.find().sort({ createdAt: -1 }).lean();
 }
 
-export function initializeGames(initialGames) {
-  currentGames = cloneGames(initialGames);
-}
-
-export function getGames() {
-  return cloneGames(currentGames);
-}
-
-export function createGame(input) {
+export async function createGame(input) {
   const title = normalizeText(input?.title);
   const description = normalizeText(input?.description);
   const entryLabel = normalizeText(input?.entryLabel) || 'Submission';
   const deadline = normalizeText(input?.deadline);
   const rewardPoints = normalizeRewardPoints(input?.rewardPoints);
 
-  if (!title) {
-    throw new Error('game title is required');
-  }
+  if (!title) throw new Error('game title is required');
+  if (!description) throw new Error('game description is required');
 
-  if (!description) {
-    throw new Error('game description is required');
-  }
-
-  const game = {
+  const game = await Game.create({
     id: randomUUID(),
     title,
     description,
@@ -80,49 +39,32 @@ export function createGame(input) {
     rewardPoints,
     acceptingEntries: true,
     submissions: []
-  };
+  });
 
-  currentGames = [game, ...currentGames];
-  return cloneGame(game);
+  return game.toObject();
 }
 
-export function setGameEntryStatus(gameId, acceptingEntries) {
-  const game = findGame(gameId);
-
-  if (!game) {
-    throw new Error('Game not found');
-  }
+export async function setGameEntryStatus(gameId, acceptingEntries) {
+  const game = await Game.findOne({ id: gameId });
+  if (!game) throw new Error('Game not found');
 
   game.acceptingEntries = Boolean(acceptingEntries);
-  return cloneGame(game);
+  await game.save();
+  return game.toObject();
 }
 
-export function submitGameEntry({ gameId, teamId, teamName, college, entry }, awardPoints) {
-  const game = findGame(gameId);
-
-  if (!game) {
-    throw new Error('Game not found');
-  }
+export async function submitGameEntry({ gameId, teamId, teamName, college, entry }) {
+  const game = await Game.findOne({ id: gameId });
+  if (!game) throw new Error('Game not found');
 
   if (!game.acceptingEntries || hasDeadlineExpired(game.deadline)) {
     throw new Error('Entries are closed for this game');
   }
 
   const normalizedEntry = normalizeText(entry);
+  if (!normalizedEntry) throw new Error('entry is required');
 
-  if (!normalizeText(teamId)) {
-    throw new Error('teamId is required');
-  }
-
-  if (!normalizeText(teamName)) {
-    throw new Error('team name is required');
-  }
-
-  if (!normalizedEntry) {
-    throw new Error('entry is required');
-  }
-
-  if (game.submissions.some((submission) => submission.teamId === teamId)) {
+  if (game.submissions.some((s) => s.teamId === teamId)) {
     throw new Error('This team has already submitted for this game');
   }
 
@@ -132,69 +74,50 @@ export function submitGameEntry({ gameId, teamId, teamName, college, entry }, aw
     teamName,
     college: normalizeText(college),
     entry: normalizedEntry,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
     status: 'pending',
     awardedPoints: 0
   };
 
   game.submissions.unshift(submission);
+  await game.save();
 
   return {
-    game: cloneGame(game),
-    submission: cloneSubmission(submission)
+    game: game.toObject(),
+    submission
   };
 }
 
-export function reviewGameSubmission({ gameId, submissionId, decision }, awardPoints) {
-  const game = findGame(gameId);
+export async function reviewGameSubmission({ gameId, submissionId, decision }, awardPointsFn) {
+  const game = await Game.findOne({ id: gameId });
+  if (!game) throw new Error('Game not found');
 
-  if (!game) {
-    throw new Error('Game not found');
-  }
-
-  const submission = game.submissions.find((entry) => entry.id === submissionId);
-
-  if (!submission) {
-    throw new Error('Submission not found');
-  }
-
-  if (submission.status !== 'pending') {
-    throw new Error('Submission already reviewed');
-  }
+  const submission = game.submissions.find((s) => s.id === submissionId);
+  if (!submission) throw new Error('Submission not found');
+  if (submission.status !== 'pending') throw new Error('Submission already reviewed');
 
   if (decision !== 'approved' && decision !== 'rejected') {
     throw new Error('decision must be approved or rejected');
   }
 
   submission.status = decision;
-  submission.reviewedAt = new Date().toISOString();
+  submission.reviewedAt = new Date();
 
   if (decision === 'approved') {
-    const awardedPoints = game.rewardPoints;
-    submission.awardedPoints = awardedPoints;
-
-    if (typeof awardPoints === 'function' && awardedPoints > 0) {
-      awardPoints(submission.teamId, awardedPoints);
+    submission.awardedPoints = game.rewardPoints;
+    if (typeof awardPointsFn === 'function') {
+      await awardPointsFn(submission.teamId, submission.awardedPoints);
     }
   }
 
-  if (decision === 'rejected') {
-    submission.awardedPoints = 0;
-  }
-
+  await game.save();
   return {
-    game: cloneGame(game),
-    submission: cloneSubmission(submission)
+    game: game.toObject(),
+    submission: submission.toObject()
   };
 }
 
-export function deleteGame(gameId) {
-  const gameIndex = currentGames.findIndex((game) => game.id === gameId);
-
-  if (gameIndex === -1) {
-    throw new Error('Game not found');
-  }
-
-  currentGames.splice(gameIndex, 1);
+export async function deleteGame(gameId) {
+  const result = await Game.deleteOne({ id: gameId });
+  if (result.deletedCount === 0) throw new Error('Game not found');
 }
-

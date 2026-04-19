@@ -1,119 +1,78 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { event, judges, teams } from './data.js';
+import mongoose from 'mongoose';
+import { event as defaultEvent, judges as defaultJudges, teams as defaultTeams } from './data.js';
+import { Event } from './models/Event.js';
+import { Judge } from './models/Judge.js';
+import { Team } from './models/Team.js';
+import { Game } from './models/Game.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const dataDirPath = path.resolve(__dirname, '../data');
-const dataFilePath = path.join(dataDirPath, 'runtime-data.json');
-
-function cloneEvent(input) {
-  return {
-    ...input,
-    tracks: Array.isArray(input?.tracks) ? [...input.tracks] : [],
-    contacts: Array.isArray(input?.contacts)
-      ? input.contacts.map((contact) => ({ ...contact }))
-      : [],
-    photos: Array.isArray(input?.photos)
-      ? input.photos.map((photo) => ({ ...photo }))
-      : []
-  };
-}
-
-function cloneJudges(input) {
-  return Array.isArray(input)
-    ? input.map((judge) => ({
-      name: String(judge?.name ?? '').trim(),
-      companyName: String(judge?.companyName ?? '').trim(),
-      photoUrl: String(judge?.photoUrl ?? '').trim()
-    }))
-    : [];
-}
-
-function cloneTeams(input) {
-  return Array.isArray(input)
-    ? input.map((team) => ({
-      ...team,
-      members: Array.isArray(team?.members) ? [...team.members] : [],
-      bonusPoints: Number(team?.bonusPoints) || 0,
-      scores: { ...(team?.scores ?? {}) }
-    }))
-    : [];
-}
-
-function cloneGames(input) {
-  return Array.isArray(input)
-    ? input.map((game) => ({
-      ...game,
-      title: String(game?.title ?? '').trim(),
-      description: String(game?.description ?? '').trim(),
-      entryLabel: String(game?.entryLabel ?? '').trim() || 'Submission',
-      deadline: String(game?.deadline ?? '').trim(),
-      rewardPoints: Number(game?.rewardPoints) || 0,
-      acceptingEntries: Boolean(game?.acceptingEntries),
-      submissions: Array.isArray(game?.submissions)
-        ? game.submissions.map((submission) => ({ ...submission }))
-        : []
-    }))
-    : [];
-}
-
-function createDefaultSnapshot() {
-  return {
-    event: cloneEvent(event),
-    judges: cloneJudges(judges),
-    teams: cloneTeams(teams),
-    games: []
-  };
-}
-
-function ensureDataDir() {
-  fs.mkdirSync(dataDirPath, { recursive: true });
-}
-
-function normalizeSnapshot(parsedSnapshot) {
-  const defaults = createDefaultSnapshot();
-
-  return {
-    event: parsedSnapshot?.event ? cloneEvent(parsedSnapshot.event) : defaults.event,
-    judges:
-      Array.isArray(parsedSnapshot?.judges) && parsedSnapshot.judges.length > 0
-        ? cloneJudges(parsedSnapshot.judges)
-        : defaults.judges,
-    teams:
-      Array.isArray(parsedSnapshot?.teams) && parsedSnapshot.teams.length > 0
-        ? cloneTeams(parsedSnapshot.teams)
-        : defaults.teams,
-    games:
-      Array.isArray(parsedSnapshot?.games) && parsedSnapshot.games.length > 0
-        ? cloneGames(parsedSnapshot.games)
-        : defaults.games
-  };
-}
-
-export function loadSnapshot() {
-  ensureDataDir();
-
-  if (!fs.existsSync(dataFilePath)) {
-    const defaults = createDefaultSnapshot();
-    fs.writeFileSync(dataFilePath, `${JSON.stringify(defaults, null, 2)}\n`, 'utf8');
-    return defaults;
+export async function connectDatabase() {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI is not defined in .env');
   }
 
   try {
-    const fileContents = fs.readFileSync(dataFilePath, 'utf8');
-    const parsed = JSON.parse(fileContents);
-    return normalizeSnapshot(parsed);
-  } catch {
-    const defaults = createDefaultSnapshot();
-    fs.writeFileSync(dataFilePath, `${JSON.stringify(defaults, null, 2)}\n`, 'utf8');
-    return defaults;
+    await mongoose.connect(uri);
+    console.log('Connected to MongoDB Atlas');
+    await seedInitialData();
+  } catch (error) {
+    console.error('MongoDB connection error:', error.message);
+    throw error;
   }
 }
 
-export function saveSnapshot(snapshot) {
-  ensureDataDir();
-  const normalized = normalizeSnapshot(snapshot);
-  fs.writeFileSync(dataFilePath, `${JSON.stringify(normalized, null, 2)}\n`, 'utf8');
+async function seedInitialData() {
+  const eventCount = await Event.countDocuments();
+  if (eventCount === 0) {
+    console.log('Seeding initial event data...');
+    await Event.create({
+      ...defaultEvent,
+      contacts: defaultEvent.contacts || [],
+      photos: defaultEvent.photos || []
+    });
+  }
+
+  const teamCount = await Team.countDocuments();
+  if (teamCount === 0) {
+    console.log('Seeding initial teams...');
+    const formattedTeams = defaultTeams.map((name, index) => ({
+      id: `team-${String(index + 1).padStart(3, '0')}`,
+      name: String(name).trim(),
+      bonusPoints: 0,
+      scores: {}
+    }));
+    await Team.insertMany(formattedTeams);
+  }
+
+  const judgeCount = await Judge.countDocuments();
+  if (judgeCount === 0 && defaultJudges && defaultJudges.length > 0) {
+    console.log('Seeding initial judges...');
+    await Judge.insertMany(defaultJudges);
+  }
+}
+
+export async function loadSnapshot() {
+  const event = await Event.findOne().lean();
+  const judges = await Judge.find().lean();
+  const teams = await Team.find().lean();
+  const games = await Game.find().lean();
+
+  return {
+    event: event || defaultEvent,
+    judges: judges || [],
+    teams: teams || [],
+    games: games || []
+  };
+}
+
+export async function saveSnapshot(snapshot) {
+  if (snapshot.event) {
+    const { _id, createdAt, updatedAt, ...eventData } = snapshot.event;
+    await Event.updateOne({}, { $set: eventData }, { upsert: true });
+  }
+  
+  if (snapshot.judges) {
+    // For judges, we might need a more complex sync if they are added/removed.
+    // For simplicity in the admin dashboard, we'll just handle updates via specific endpoints usually.
+  }
 }
