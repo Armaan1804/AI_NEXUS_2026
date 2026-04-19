@@ -293,13 +293,15 @@ app.get('*', (req, res, next) => {
 async function startServer() {
   try {
     await connectDatabase();
-    app.listen(port, () => {
-      console.log(`AI NEXUS server running on http://localhost:${port}`);
+    console.log(`Client files location: ${clientDistPath}`);
+    app.listen(port, '0.0.0.0', () => {
+      console.log(`AI NEXUS server running on http://0.0.0.0:${port}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error.message);
     process.exit(1);
   }
 }
+
 
 startServer();
