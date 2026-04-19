@@ -284,7 +284,44 @@ app.post('/api/admin/teams/:teamId/deduct', authenticateAdmin, async (request, r
   }
 });
 
+app.get('/api/admin/force-restore', authenticateAdmin, async (request, response) => {
+  try {
+    const { Event } = await import('./models/Event.js');
+    const { Judge } = await import('./models/Judge.js');
+    
+    const event = await Event.findOne();
+    if (event) {
+      event.photos = [
+        { "imageUrl": "/api/uploads/1776157535536-1d7fa0f1fac7.jpeg", "caption": "Glimpse from past Event" },
+        { "imageUrl": "/api/uploads/1776157439686-c9f99212e234.jpeg", "caption": "Networking session" },
+        { "imageUrl": "/api/uploads/1776228633278-1bb2da76d935.jpeg", "caption": "Workshop highlights" }
+      ];
+      event.contacts = [
+        { "name": "Yasha Tasaneem", "phone": "63875 11385", "label": "Hackathon Coordinator" },
+        { "name": "Namit Sharma", "phone": "98556 03243", "label": "Technical Lead(Admin)" }
+      ];
+      await event.save();
+    }
+
+    const judgesData = [
+      { "name": "Mr. Rakesh Gahlot", "companyName": "Mphasis Corporation", "photoUrl": "/api/uploads/1776229071403-28a92a20b275.jpeg" },
+      { "name": "Amol M. Khadge", "companyName": "MSR Technology Group", "photoUrl": "/api/uploads/1776229456523-fb87dfde5608.jpeg" },
+      { "name": "Jafash Wadhwa", "companyName": "Sapient", "photoUrl": "/api/uploads/1776229455202-cb3fb6377c37.jpeg" },
+      { "name": "Manish Kumar Abhay Singh", "companyName": "Mphasis Corporation", "photoUrl": "/api/uploads/1776229453161-aa90ad6e329b.jpeg" }
+    ];
+
+    for (const j of judgesData) {
+      await Judge.findOneAndUpdate({ name: j.name }, j, { upsert: true });
+    }
+
+    response.json({ message: "Database force-restored successfully!" });
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
 app.use(express.static(clientDistPath));
+
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) return next();
   res.sendFile(path.join(clientDistPath, 'index.html'), (err) => err && next());
