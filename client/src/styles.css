@@ -860,8 +860,15 @@ select {
 
   .hero-tags {
     justify-content: center;
+    margin-top: 16px;
+  }
+
+  .hero-actions {
+    justify-content: center;
+    margin-top: 24px;
   }
 }
+
 
 @media (max-width: 640px) {
   .page-shell {
@@ -888,7 +895,21 @@ select {
 
   .hero-tags {
     gap: 8px;
+    justify-content: center;
   }
+
+  .hero-actions {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
 
   .stat-grid {
     grid-template-columns: 1fr;
@@ -938,10 +959,12 @@ select {
   .secondary-button,
   .danger-button {
     width: 100%;
+    max-width: 320px;
     justify-content: center;
     padding: 14px;
     font-size: 1rem;
   }
+
 
   .game-card-head {
     flex-direction: column;
