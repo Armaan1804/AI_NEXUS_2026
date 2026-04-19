@@ -302,78 +302,115 @@ button, input, select, textarea { font: inherit; }
 
 /* --- MEDIA QUERIES (AT THE END FOR PRIORITY) --- */
 
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
 @media (max-width: 960px) {
   .hero { grid-template-columns: 1fr; }
   .feature-grid, .judge-grid, .gallery-grid, .stat-grid { grid-template-columns: 1fr; }
   
   .admin-login-corner {
-    position: static;
+    position: relative;
+    top: 0;
+    right: 0;
     display: block;
     width: fit-content;
-    margin: 0 auto 16px;
+    margin: 0 auto 24px;
     text-align: center;
   }
 }
 
 @media (max-width: 640px) {
-  .page-shell { padding: 16px; }
+  .page-shell { 
+    padding: 16px;
+    width: 100%;
+  }
   
   .hero-copy {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 36px 20px !important;
+  }
+
+  .eyebrow {
     text-align: center;
-    padding: 32px 20px;
+    width: 100%;
+    display: block;
   }
 
   .hero h1 {
-    font-size: clamp(2.2rem, 12vw, 3.2rem);
+    font-size: clamp(2rem, 10vw, 3rem);
     text-align: center;
     max-width: 100%;
+    margin: 0 auto;
+    display: block;
   }
 
   .hero-text {
     text-align: center;
     font-size: 1rem;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .hero-tags {
     justify-content: center;
+    width: 100%;
   }
 
   .hero-actions {
     justify-content: center;
+    align-items: center;
     width: 100%;
     flex-direction: column;
+    gap: 12px;
   }
 
   .primary-button, .secondary-button {
     width: 100%;
-    max-width: 320px;
+    max-width: 280px;
   }
 
   .section-heading {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    gap: 8px;
   }
 
   .leaderboard-row {
     flex-direction: column;
     text-align: center;
     gap: 12px;
+    padding: 20px 16px;
   }
 
-  .score-block { text-align: center; }
+  .score-block { 
+    text-align: center;
+    width: 100%;
+    margin-top: 8px;
+  }
 
   .timeline-item {
     grid-template-columns: 1fr;
     text-align: center;
+    gap: 12px;
   }
 
   .judge-card {
     grid-template-columns: 1fr;
     justify-items: center;
     text-align: center;
+  }
+  
+  .hero-card {
+    text-align: center;
+    padding: 24px 16px;
   }
 }
