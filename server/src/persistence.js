@@ -45,11 +45,34 @@ async function seedInitialData() {
   }
 
   const judgeCount = await Judge.countDocuments();
-  if (judgeCount === 0 && defaultJudges && defaultJudges.length > 0) {
+  if (judgeCount === 0) {
     console.log('Seeding initial judges...');
-    await Judge.insertMany(defaultJudges);
+    const judgesData = [
+      {
+        "name": "Mr. Rakesh Gahlot",
+        "companyName": "Mphasis Corporation",
+        "photoUrl": "/api/uploads/1776229071403-28a92a20b275.jpeg"
+      },
+      {
+        "name": "Amol M. Khadge",
+        "companyName": "MSR Technology Group",
+        "photoUrl": "/api/uploads/1776229456523-fb87dfde5608.jpeg"
+      },
+      {
+        "name": "Jafash Wadhwa",
+        "companyName": "Sapient",
+        "photoUrl": "/api/uploads/1776229455202-cb3fb6377c37.jpeg"
+      },
+      {
+        "name": "Manish Kumar Abhay Singh",
+        "companyName": "Mphasis Corporation",
+        "photoUrl": "/api/uploads/1776229453161-aa90ad6e329b.jpeg"
+      }
+    ];
+    await Judge.insertMany(judgesData);
   }
 }
+
 
 export async function loadSnapshot() {
   const event = await Event.findOne().lean();
