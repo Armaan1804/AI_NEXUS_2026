@@ -311,40 +311,6 @@ button, input, select, textarea { font: inherit; }
 .timeline-item { display: grid; grid-template-columns: 120px 1fr; gap: 16px; }
 .timeline-item span { color: #9bb1dd; font-weight: 700; }
 
-.search-field {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 24px;
-  color: var(--muted);
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.search-field input {
-  background: rgba(13, 24, 48, 0.5);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px 18px;
-  color: var(--text);
-  outline: none;
-  transition: all 0.25s ease;
-  width: 100%;
-  font-size: 1rem;
-}
-
-.search-field input:focus {
-  border-color: var(--accent);
-  background: rgba(13, 24, 48, 0.8);
-  box-shadow: 0 0 20px rgba(0, 210, 255, 0.12);
-}
-
-.search-field input::placeholder {
-  color: rgba(167, 183, 220, 0.4);
-}
-
 .admin-login-corner {
   position: absolute;
   top: 8px;
