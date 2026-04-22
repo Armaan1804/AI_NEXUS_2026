@@ -93,6 +93,7 @@ button, input, select, textarea { font: inherit; }
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow);
   border-radius: 26px;
+  padding: 32px;
 }
 
 .hero-copy {
@@ -261,10 +262,44 @@ button, input, select, textarea { font: inherit; }
   padding: 18px;
 }
 
-.leaderboard-row { display: flex; justify-content: space-between; align-items: center; }
-.rank { color: #9bb1dd; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; }
-.score-block { text-align: right; }
-.score-block strong { display: block; font-size: 2rem; line-height: 1; }
+.leaderboard-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.leaderboard-row:hover {
+  transform: translateX(4px);
+  border-color: var(--accent);
+}
+
+.rank-badge {
+  background: linear-gradient(135deg, var(--accent), var(--accent-3));
+  color: #050a16;
+  font-weight: 800;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 210, 255, 0.3);
+}
+
+.team-info h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #f2f7ff;
+}
+
+.team-info p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
 
 .judge-card { display: grid; grid-template-columns: 72px 1fr; gap: 14px; align-items: start; }
 .judge-photo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.16); }

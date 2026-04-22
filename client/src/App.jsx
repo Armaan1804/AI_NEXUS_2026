@@ -502,17 +502,29 @@ function App() {
     }
   ];
 
+  const top11Names = useMemo(() => [
+    "Farsight AI",
+    "Vandalizers",
+    "Rasta",
+    "404 Trio Not Found",
+    "Ace",
+    "CloudMind AI",
+    "Digital Dominators",
+    "Elite Engineers",
+    "Team Cypher",
+    "Team Elites",
+    "Team Vayu"
+  ], []);
+
   const filteredLeaderboard = useMemo(() => {
-    const query = leaderboardQuery.trim().toLowerCase();
-
-    const filtered = !query
-      ? leaderboard
-      : leaderboard.filter((entry) => {
-          return `${entry.teamName} ${entry.college}`.toLowerCase().includes(query);
-        });
-
-    return filtered.slice(0, 11);
-  }, [leaderboard, leaderboardQuery]);
+    return leaderboard
+      .filter((entry) => top11Names.some(name => name.toLowerCase() === entry.teamName.toLowerCase()))
+      .sort((a, b) => {
+        const indexA = top11Names.findIndex(name => name.toLowerCase() === a.teamName.toLowerCase());
+        const indexB = top11Names.findIndex(name => name.toLowerCase() === b.teamName.toLowerCase());
+        return indexA - indexB;
+      });
+  }, [leaderboard, top11Names]);
 
   const filteredSchedule = useMemo(() => {
     const query = scheduleQuery.trim().toLowerCase();
@@ -1520,32 +1532,18 @@ function App() {
             </div>
             <span className="live-pill">Live</span>
           </div>
-          <label className="search-field" htmlFor="leaderboard-search">
-            Search your team
-            <input
-              id="leaderboard-search"
-              type="search"
-              value={leaderboardQuery}
-              onChange={(event) => setLeaderboardQuery(event.target.value)}
-              placeholder="Type a team name or college"
-            />
-          </label>
-          <div className="leaderboard-list">
-            {filteredLeaderboard.map((entry, index) => (
+          <div className="leaderboard-list premium">
+            {filteredLeaderboard.map((entry) => (
               <article key={entry.teamId} className="leaderboard-row">
-                <div>
-                  <span className="rank">#{entry.rank}</span>
+                <div className="rank-badge">#{entry.rank}</div>
+                <div className="team-info">
                   <h3>{entry.teamName}</h3>
                   <p>{entry.college}</p>
-                </div>
-                <div className="score-block">
-                  <strong>{entry.total}</strong>
-                  <span>points</span>
                 </div>
               </article>
             ))}
             {filteredLeaderboard.length === 0 ? (
-              <p className="empty-state">No teams match this search yet.</p>
+              <p className="empty-state">Loading rankings...</p>
             ) : null}
           </div>
         </section>
