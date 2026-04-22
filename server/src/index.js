@@ -9,14 +9,6 @@ import multer from 'multer';
 import { schedule } from './data.js';
 import { connectDatabase, loadSnapshot, saveSnapshot } from './persistence.js';
 import { awardPoints, broadcast, getFullState, subscribeClient, updateScore, deductPoints } from './state.js';
-import {
-  createGame,
-  getGames,
-  reviewGameSubmission,
-  setGameEntryStatus,
-  submitGameEntry,
-  deleteGame
-} from './games.js';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -74,8 +66,7 @@ function authenticateAdmin(request, response, next) {
 }
 
 async function buildAppState() {
-  const games = await getGames();
-  return await getFullState(games);
+  return await getFullState();
 }
 
 async function commitAndBroadcast() {
