@@ -1,23 +1,35 @@
 import mongoose from 'mongoose';
+import fs from 'node:fs';
+import path from 'node:path';
 import { event as defaultEvent, judges as defaultJudges, teams as defaultTeams } from './data.js';
 import { Event } from './models/Event.js';
 import { Judge } from './models/Judge.js';
 import { Team } from './models/Team.js';
 import { Game } from './models/Game.js';
 
+export let isDbConnected = false;
+
 export async function connectDatabase() {
   const uri = process.env.MONGODB_URI;
   if (!uri) {
-    throw new Error('MONGODB_URI is not defined in .env');
+    console.warn('MONGODB_URI is not defined in .env. Running in LOCAL MODE.');
+    return;
   }
 
   try {
-    await mongoose.connect(uri);
+    // Set a timeout for the connection attempt
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000 
+    });
     console.log('Connected to MongoDB Atlas');
+    isDbConnected = true;
     await seedInitialData();
   } catch (error) {
-    console.error('MongoDB connection error:', error.message);
-    throw error;
+    console.error('--- DATABASE CONNECTION FAILED ---');
+    console.error('Error:', error.message);
+    console.warn('The application will continue in LOCAL MODE using local JSON data.');
+    console.error('----------------------------------');
+    isDbConnected = false;
   }
 }
 
@@ -97,6 +109,33 @@ async function seedInitialData() {
 
 
 export async function loadSnapshot() {
+  if (!isDbConnected) {
+    const dataFilePath = path.resolve(process.cwd(), 'server/data/runtime-data.json');
+    let localTeams = defaultTeams.map((name, index) => ({
+      id: `team-${String(index + 1).padStart(3, '0')}`,
+      name: name,
+      college: '',
+      bonusPoints: 0,
+      scores: {}
+    }));
+
+    try {
+      if (fs.existsSync(dataFilePath)) {
+        const localData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
+        if (localData.teams) localTeams = localData.teams;
+      }
+    } catch (e) {
+      console.warn('Could not load runtime-data.json fallback:', e.message);
+    }
+
+    return {
+      event: defaultEvent,
+      judges: [],
+      teams: localTeams,
+      games: []
+    };
+  }
+
   const event = await Event.findOne().lean();
   const judges = await Judge.find().lean();
   const teams = await Team.find().lean();

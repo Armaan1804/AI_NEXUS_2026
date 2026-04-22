@@ -16,7 +16,10 @@ function hasDeadlineExpired(deadline) {
   return Date.now() > parsedDeadline;
 }
 
+import { isDbConnected } from './persistence.js';
+
 export async function getGames() {
+  if (!isDbConnected) return [];
   return await Game.find().sort({ createdAt: -1 }).lean();
 }
 

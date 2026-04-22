@@ -315,8 +315,15 @@ async function startServer() {
       console.log(`AI NEXUS server is LIVE on http://0.0.0.0:${port}`);
     });
   } catch (error) {
-    console.error('CRITICAL STARTUP ERROR:', error);
-    process.exit(1);
+    console.error('--- CRITICAL STARTUP WARNING ---');
+    console.error('The server encountered an error during initialization, but it will continue to run in degraded/LOCAL mode.');
+    console.error('Error Details:', error.message);
+    console.error('--------------------------------');
+    
+    // We still start the server so the frontend can connect
+    app.listen(port, '0.0.0.0', () => {
+      console.log(`AI NEXUS server is LIVE (LOCAL MODE) on http://0.0.0.0:${port}`);
+    });
   }
 }
 
