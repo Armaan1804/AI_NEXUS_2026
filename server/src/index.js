@@ -111,14 +111,6 @@ app.get('/api/leaderboard', async (request, response) => {
   }
 });
 
-app.get('/api/games', async (request, response) => {
-  try {
-    const games = await getGames();
-    response.json({ games });
-  } catch (error) {
-    response.status(500).json({ error: error.message });
-  }
-});
 
 app.post('/api/admin/login', (request, response) => {
   if (!adminUsername || !adminPassword) {
