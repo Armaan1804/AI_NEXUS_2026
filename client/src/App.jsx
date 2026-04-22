@@ -505,13 +505,13 @@ function App() {
   const filteredLeaderboard = useMemo(() => {
     const query = leaderboardQuery.trim().toLowerCase();
 
-    if (!query) {
-      return leaderboard;
-    }
+    const filtered = !query
+      ? leaderboard
+      : leaderboard.filter((entry) => {
+          return `${entry.teamName} ${entry.college}`.toLowerCase().includes(query);
+        });
 
-    return leaderboard.filter((entry) => {
-      return `${entry.teamName} ${entry.college}`.toLowerCase().includes(query);
-    });
+    return filtered.slice(0, 11);
   }, [leaderboard, leaderboardQuery]);
 
   const filteredSchedule = useMemo(() => {
@@ -1516,7 +1516,7 @@ function App() {
           <div className="section-heading compact">
             <div>
               <p className="eyebrow">Live leaderboard</p>
-              <h2 id="leaderboard-heading">Real-time rankings</h2>
+              <h2 id="leaderboard-heading">Top 11 Rankings</h2>
             </div>
             <span className="live-pill">Live</span>
           </div>
@@ -1534,7 +1534,7 @@ function App() {
             {filteredLeaderboard.map((entry, index) => (
               <article key={entry.teamId} className="leaderboard-row">
                 <div>
-                  <span className="rank">#{index + 1}</span>
+                  <span className="rank">#{entry.rank}</span>
                   <h3>{entry.teamName}</h3>
                   <p>{entry.college}</p>
                 </div>

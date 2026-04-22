@@ -4,7 +4,7 @@ import { Team } from './models/Team.js';
 const clients = new Set();
 
 export function calculateLeaderboard(currentTeams) {
-  return currentTeams
+  const sorted = currentTeams
     .map((team) => {
       // Handle Mongoose Map or plain object
       const scoresObj = team.scores instanceof Map 
@@ -26,6 +26,11 @@ export function calculateLeaderboard(currentTeams) {
         right.total - left.total ||
         left.teamName.localeCompare(right.teamName)
     );
+
+  return sorted.map((entry, index) => ({
+    ...entry,
+    rank: index + 1
+  }));
 }
 
 export async function getFullState(games = []) {
