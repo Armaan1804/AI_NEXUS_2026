@@ -502,29 +502,19 @@ function App() {
     }
   ];
 
-  const top11Names = useMemo(() => [
-    "Farsight AI",
-    "Vandalizers",
-    "Rasta",
-    "404 Trio Not Found",
-    "Ace",
-    "CloudMind AI",
-    "Digital Dominators",
-    "Elite Engineers",
-    "Team Cypher",
-    "Team Elites",
-    "Team Vayu"
-  ], []);
-
-  const filteredLeaderboard = useMemo(() => {
-    return leaderboard
-      .filter((entry) => top11Names.some(name => name.toLowerCase() === entry.teamName.toLowerCase()))
-      .sort((a, b) => {
-        const indexA = top11Names.findIndex(name => name.toLowerCase() === a.teamName.toLowerCase());
-        const indexB = top11Names.findIndex(name => name.toLowerCase() === b.teamName.toLowerCase());
-        return indexA - indexB;
-      });
-  }, [leaderboard, top11Names]);
+  const filteredLeaderboard = [
+    { rank: 1, teamName: "Farsight AI", college: "The NorthCap University", teamId: "h-1" },
+    { rank: 2, teamName: "Vandalizers", college: "Baddi University of Emerging Sciences and Technology", teamId: "h-2" },
+    { rank: 3, teamName: "Rasta", college: "MNNIT Allahabad", teamId: "h-3" },
+    { rank: 4, teamName: "404 Trio Not Found", college: "COER University", teamId: "h-4" },
+    { rank: 5, teamName: "Ace", college: "Symbiosis Institute of Technology", teamId: "h-5" },
+    { rank: 6, teamName: "CloudMind AI", college: "JSPM University", teamId: "h-6" },
+    { rank: 7, teamName: "Digital Dominators", college: "Chandigarh University", teamId: "h-7" },
+    { rank: 8, teamName: "Elite Engineers", college: "Chandigarh University", teamId: "h-8" },
+    { rank: 9, teamName: "Team Cypher", college: "Dr. Akhilesh Das Gupta Institute of Technology and Management", teamId: "h-9" },
+    { rank: 10, teamName: "Team Elites", college: "Medhavi Skills University", teamId: "h-10" },
+    { rank: 11, teamName: "Team Vayu", college: "Chitkara University", teamId: "h-11" }
+  ];
 
   const filteredSchedule = useMemo(() => {
     const query = scheduleQuery.trim().toLowerCase();
