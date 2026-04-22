@@ -21,14 +21,13 @@ export function calculateLeaderboard(currentTeams) {
 
 import { isDbConnected, loadSnapshot } from './persistence.js';
 
-export async function getFullState(games = []) {
+export async function getFullState() {
   if (!isDbConnected) {
     const snapshot = await loadSnapshot();
     return {
       teams: snapshot.teams,
       rounds,
-      leaderboard: calculateLeaderboard(snapshot.teams),
-      games: []
+      leaderboard: calculateLeaderboard(snapshot.teams)
     };
   }
 
@@ -36,8 +35,7 @@ export async function getFullState(games = []) {
   return {
     teams,
     rounds,
-    leaderboard: calculateLeaderboard(teams),
-    games
+    leaderboard: calculateLeaderboard(teams)
   };
 }
 
