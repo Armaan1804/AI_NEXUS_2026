@@ -56,17 +56,83 @@ export const judges = [
 ];
 
 export const leaderboard = [
-  { rank: 1, teamName: "Farsight AI", teamId: "finalist-1" },
-  { rank: 2, teamName: "Vandalizers", teamId: "finalist-2" },
-  { rank: 3, teamName: "Rasta", teamId: "finalist-3" },
-  { rank: 4, teamName: "404 Trio Not Found", teamId: "finalist-4" },
-  { rank: 5, teamName: "Ace", teamId: "finalist-5" },
-  { rank: 6, teamName: "CloudMind AI", teamId: "finalist-6" },
-  { rank: 7, teamName: "Digital Dominators", teamId: "finalist-7" },
-  { rank: 8, teamName: "Elite Engineers", teamId: "finalist-8" },
-  { rank: 9, teamName: "Team Cypher", teamId: "finalist-9" },
-  { rank: 10, teamName: "Team Elites", teamId: "finalist-10" },
-  { rank: 11, teamName: "Team Vayu", teamId: "finalist-11" }
+  {
+    rank: 1,
+    teamName: "FAIRSIGHT AI",
+    teamId: "finalist-1",
+    college: "Thapar Institute of Engineering and Technology (TIET), Patiala",
+    members: ["Aahuti Chawla", "Aryan Vasdev", "Reedhima Juneja", "Daksh Sharma"]
+  },
+  {
+    rank: 2,
+    teamName: "Vandalizers",
+    teamId: "finalist-2",
+    college: "Chandigarh University",
+    members: ["Aditya Pandey", "Avik Srivastava", "Lavisha", "Sanya"]
+  },
+  {
+    rank: 3,
+    teamName: "Rasta",
+    teamId: "finalist-3",
+    college: "Chitkara University / Amity University Punjab",
+    members: ["Aryan Mahajan", "Rojal", "Sukhmanjeet Singh", "Tamal Krishna Chhabra"]
+  },
+  {
+    rank: 4,
+    teamName: "404 Trio Not Found",
+    teamId: "finalist-4",
+    college: "Chandigarh University",
+    members: ["Varun", "Paras Kaushik", "Krishna Goenka"]
+  },
+  {
+    rank: 5,
+    teamName: "Ace",
+    teamId: "finalist-5",
+    college: "Chandigarh University",
+    members: ["Sahil", "Kunal Choudhary", "Raghav", "Lucky Dewangan"]
+  },
+  {
+    rank: 6,
+    teamName: "CloudMindAI",
+    teamId: "finalist-6",
+    college: "Chitkara University, Rajpura",
+    members: ["Arnav Sharma", "Aditya Sood", "Bhanuja Sharma", "Abhinav Bansal"]
+  },
+  {
+    rank: 7,
+    teamName: "Digital Dominator",
+    teamId: "finalist-7",
+    college: "College of Engineering Roorkee (COER)",
+    members: ["Om Prakash", "Sanjna Sharma", "Ashi", "Rahul Sharma"]
+  },
+  {
+    rank: 8,
+    teamName: "Elite Engineers",
+    teamId: "finalist-8",
+    college: "Baddi University of Emerging Sciences and Technology",
+    members: ["Anshit Sharma"]
+  },
+  {
+    rank: 9,
+    teamName: "Team Cypher",
+    teamId: "finalist-9",
+    college: "Motilal Nehru National Institute of Technology (MNNIT), Allahabad",
+    members: ["Moksh Giri", "Tilak Soni", "Shashank Yadav", "Aditya Pathak"]
+  },
+  {
+    rank: 10,
+    teamName: "Team Of Elites",
+    teamId: "finalist-10",
+    college: "State Institute of Engineering & Technology, Nilokheri / IIT Patna",
+    members: ["Namit Bhardwaj", "Mayank", "Lakshay Sharma", "Rajyavardhan Singh"]
+  },
+  {
+    rank: 11,
+    teamName: "TEAM VAAYU",
+    teamId: "finalist-11",
+    college: "Chandigarh University",
+    members: ["Ayush Yadav", "Chirag Yadav", "Sakshamm Vipul Khanna", "Swyam"]
+  }
 ];
 
 export const schedule = [

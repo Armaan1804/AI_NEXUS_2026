@@ -1255,6 +1255,12 @@ function App() {
                 <div className="rank-badge">#{entry.rank}</div>
                 <div className="team-info">
                   <h3>{entry.teamName}</h3>
+                  {entry.college && <p className="team-college">{entry.college}</p>}
+                  {entry.members && entry.members.length > 0 && (
+                    <p className="member-list">
+                      Members: {entry.members.join(', ')}
+                    </p>
+                  )}
                 </div>
               </article>
             ))}
