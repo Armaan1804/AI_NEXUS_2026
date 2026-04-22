@@ -502,33 +502,19 @@ function App() {
     }
   ];
 
-  const top11Names = useMemo(() => [
-    "Farsight AI",
-    "Vandalizers",
-    "Rasta",
-    "404 Trio Not Found",
-    "Ace",
-    "CloudMind AI",
-    "Digital Dominators",
-    "Elite Engineers",
-    "Team Cypher",
-    "Team Elites",
-    "Team Vayu"
-  ], []);
-
-  const filteredLeaderboard = useMemo(() => {
-    return leaderboard
-      .filter((entry) => top11Names.some(name => name.toLowerCase() === entry.teamName.toLowerCase()))
-      .sort((a, b) => {
-        const indexA = top11Names.findIndex(name => name.toLowerCase() === a.teamName.toLowerCase());
-        const indexB = top11Names.findIndex(name => name.toLowerCase() === b.teamName.toLowerCase());
-        return indexA - indexB;
-      })
-      .map((entry, index) => ({
-        ...entry,
-        rank: index + 1
-      }));
-  }, [leaderboard, top11Names]);
+  const filteredLeaderboard = [
+    { rank: 1, teamName: "Farsight AI", teamId: "finalist-1" },
+    { rank: 2, teamName: "Vandalizers", teamId: "finalist-2" },
+    { rank: 3, teamName: "Rasta", teamId: "finalist-3" },
+    { rank: 4, teamName: "404 Trio Not Found", teamId: "finalist-4" },
+    { rank: 5, teamName: "Ace", teamId: "finalist-5" },
+    { rank: 6, teamName: "CloudMind AI", teamId: "finalist-6" },
+    { rank: 7, teamName: "Digital Dominators", teamId: "finalist-7" },
+    { rank: 8, teamName: "Elite Engineers", teamId: "finalist-8" },
+    { rank: 9, teamName: "Team Cypher", teamId: "finalist-9" },
+    { rank: 10, teamName: "Team Elites", teamId: "finalist-10" },
+    { rank: 11, teamName: "Team Vayu", teamId: "finalist-11" }
+  ];
 
   const filteredSchedule = useMemo(() => {
     const query = scheduleQuery.trim().toLowerCase();
