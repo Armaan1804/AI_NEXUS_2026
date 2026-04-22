@@ -9,6 +9,14 @@ import multer from 'multer';
 import { schedule } from './data.js';
 import { connectDatabase, loadSnapshot, saveSnapshot } from './persistence.js';
 import { awardPoints, broadcast, getFullState, subscribeClient, updateScore, deductPoints } from './state.js';
+import {
+  createGame,
+  getGames,
+  reviewGameSubmission,
+  setGameEntryStatus,
+  submitGameEntry,
+  deleteGame
+} from './games.js';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -66,7 +74,8 @@ function authenticateAdmin(request, response, next) {
 }
 
 async function buildAppState() {
-  return await getFullState();
+  const games = await getGames();
+  return await getFullState(games);
 }
 
 async function commitAndBroadcast() {
@@ -111,6 +120,14 @@ app.get('/api/leaderboard', async (request, response) => {
   }
 });
 
+app.get('/api/games', async (request, response) => {
+  try {
+    const games = await getGames();
+    response.json({ games });
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
 
 app.post('/api/admin/login', (request, response) => {
   if (!adminUsername || !adminPassword) {
