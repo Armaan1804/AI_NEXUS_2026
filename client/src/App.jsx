@@ -502,19 +502,7 @@ function App() {
     }
   ];
 
-  const filteredLeaderboard = [
-    { rank: 1, teamName: "Farsight AI", teamId: "finalist-1" },
-    { rank: 2, teamName: "Vandalizers", teamId: "finalist-2" },
-    { rank: 3, teamName: "Rasta", teamId: "finalist-3" },
-    { rank: 4, teamName: "404 Trio Not Found", teamId: "finalist-4" },
-    { rank: 5, teamName: "Ace", teamId: "finalist-5" },
-    { rank: 6, teamName: "CloudMind AI", teamId: "finalist-6" },
-    { rank: 7, teamName: "Digital Dominators", teamId: "finalist-7" },
-    { rank: 8, teamName: "Elite Engineers", teamId: "finalist-8" },
-    { rank: 9, teamName: "Team Cypher", teamId: "finalist-9" },
-    { rank: 10, teamName: "Team Elites", teamId: "finalist-10" },
-    { rank: 11, teamName: "Team Vayu", teamId: "finalist-11" }
-  ];
+
 
   const filteredSchedule = useMemo(() => {
     const query = scheduleQuery.trim().toLowerCase();
@@ -1377,7 +1365,7 @@ function App() {
             <span className="live-pill">Live</span>
           </div>
           <div className="leaderboard-list premium">
-            {filteredLeaderboard.map((entry) => (
+            {leaderboard.map((entry) => (
               <article key={entry.teamId} className="leaderboard-row">
                 <div className="rank-badge">#{entry.rank}</div>
                 <div className="team-info">
@@ -1385,7 +1373,7 @@ function App() {
                 </div>
               </article>
             ))}
-            {filteredLeaderboard.length === 0 ? (
+            {leaderboard.length === 0 ? (
               <p className="empty-state">Loading rankings...</p>
             ) : null}
           </div>

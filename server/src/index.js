@@ -233,7 +233,7 @@ async function startServer() {
   
   try {
     if (!process.env.MONGODB_URI) {
-      console.error('CRITICAL ERROR: MONGODB_URI is missing from environment variables!');
+      console.warn('NOTE: MONGODB_URI is missing. Running in STATIC/LOCAL MODE.');
     }
 
     await connectDatabase();

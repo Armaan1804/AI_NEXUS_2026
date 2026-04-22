@@ -22,20 +22,26 @@ export function calculateLeaderboard(currentTeams) {
 import { isDbConnected, loadSnapshot } from './persistence.js';
 
 export async function getFullState() {
-  if (!isDbConnected) {
-    const snapshot = await loadSnapshot();
-    return {
-      teams: snapshot.teams,
-      rounds,
-      leaderboard: calculateLeaderboard(snapshot.teams)
-    };
+  let currentTeams = [];
+  
+  if (isDbConnected) {
+    try {
+      currentTeams = await Team.find().lean().timeout(2000);
+    } catch (err) {
+      console.warn('MongoDB query timed out/failed in getFullState, using fallback data');
+    }
   }
 
-  const teams = await Team.find().lean();
+  // If DB failed or is not connected, try local snapshot
+  if (currentTeams.length === 0) {
+    const snapshot = await loadSnapshot();
+    currentTeams = snapshot.teams;
+  }
+
   return {
-    teams,
+    teams: currentTeams,
     rounds,
-    leaderboard: calculateLeaderboard(teams)
+    leaderboard: calculateLeaderboard(currentTeams)
   };
 }
 
