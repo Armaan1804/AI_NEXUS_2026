@@ -110,7 +110,7 @@ export const leaderboard = [
     teamName: "Elite Engineers",
     teamId: "finalist-8",
     college: "Baddi University of Emerging Sciences and Technology",
-    members: ["Anshit Sharma"]
+    members: ["Anshit Sharma", "Adit Mahajan", "Sahil Chauhan", "Kamakshi Sharma"]
   },
   {
     rank: 9,
